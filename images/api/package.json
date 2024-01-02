@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
     "test-watch": "jest --detectOpenHandles --watchAll",
-    "dev": "npm run test && node ./src/index.js"
+    "dev": "node ./src/index.js"
   },
   "repository": {
     "type": "git",
