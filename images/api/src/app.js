@@ -111,7 +111,7 @@ app.post("/register", async (req, res) => {
   const emailRegexStudents =
     /^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+\.)?[a-zA-Z]+\.)?(student.ehb|student.hogent)\.be$/;
 
-  const { email, password, fullName } = newData;
+  const { email, password, fullName } = req.body;
   if (!email || !password || !fullName) {
     return res.status(400).json({
       error: "Gelieve de ontbrekende velden in te vullen",
@@ -165,7 +165,7 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  const { email, password } = newData;
+  const { email, password } = req.body;
   if (!email || !password) {
     return res
       .status(400)
@@ -238,7 +238,7 @@ app.get("/profile", checkToken, async (req, res) => {
 
 app.put("/profile/:id", async (req, res) => {
   try {
-    const { password } = newData;
+    const { password } = req.body;
     if (!password) {
       return res.status(400).json({
         error: "Gelieve de ontbrekende velden in te vullen",
@@ -269,7 +269,7 @@ app.put("/profile/:id", async (req, res) => {
 
 app.put("/users/:id", checkRights, async (req, res) => {
   try {
-    const { email, fullName, password } = newData;
+    const { email, fullName, password } = req.body;
     if (!email || !fullName || !password) {
       return res.status(400).json({
         error: "Gelieve de ontbrekende velden in te vullen",
@@ -325,13 +325,12 @@ app.delete("/profile/:id", checkRights, async (req, res) => {
 
 app.put("/scenario/:id", async (req, res) => {
   try {
-    const newData = newData;
     const id = req.params.id;
     if (
-      !newData ||
-      !newData.description ||
-      !newData.title ||
-      newData.steps.length == 0
+      !req.body ||
+      !req.body.description ||
+      !req.body.title ||
+      req.body.steps.length == 0
     ) {
       return res
         .status(400)
@@ -340,10 +339,8 @@ app.put("/scenario/:id", async (req, res) => {
 
     const db = client.db("Leerpaden").collection("data");
     await db.findOneAndUpdate(
-      {
-        title: "Interactieve leerpaden!",
-      },
-      { $set: { "scenarios.$[element]": newData } },
+      {},
+      { $set: { "scenarios.$[element]": req.body } },
       { arrayFilters: [{ "element.id": parseInt(id) }] }
     );
 
@@ -357,13 +354,13 @@ app.put("/scenario/:id", async (req, res) => {
 });
 
 app.post("/scenario", async (req, res) => {
-  const newData = req.body;
+  const newScenario = req.body;
   try {
     if (
-      !newData ||
-      !newData.description ||
-      !newData.title ||
-      newData.steps.length == 0
+      !newScenario ||
+      !newScenario.description ||
+      !newScenario.title ||
+      newScenario.steps.length == 0
     ) {
       return res
         .status(400)
@@ -372,7 +369,7 @@ app.post("/scenario", async (req, res) => {
     await client.connect();
     const db = client.db("Leerpaden").collection("data");
 
-    await db.updateOne({}, { $push: { scenarios: newData } });
+    await db.updateOne({}, { $push: { scenarios: newScenario } });
 
     res.status(200).send({
       message: "Scenario gemaakt",

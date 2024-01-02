@@ -1,8 +1,8 @@
 version: "3.9"
 services:
   api:
-    image: mohamedmankouchi/storypathapi
     build: ./images/api
+    image: mohamedmankouchi/storypathapi
     environment:
       MONGO_URL:
       PORT:
