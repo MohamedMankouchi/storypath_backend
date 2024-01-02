@@ -1,0 +1,43 @@
+name: pushWorkflow
+
+on:
+  push:
+    branches: [main]
+
+env:
+    PORT: 80
+    MONGO_URL: ${{ secrets.MONGO_URL }}
+    ACCES_TOKEN_SECRET : ${{ secrets.ACCES }}
+    
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build docker containers
+        run: docker-compose build
+
+      - name: run docker containers
+        run: docker-compose -f ./docker-compose.testing.yml up --build --exit-code-from api
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build
+        run: docker-compose build
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: publish
+        run: docker-compose push
