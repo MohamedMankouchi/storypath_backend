@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  api:
+    build: ./images/api
+    environment:
+      MONGO_URL:
+      PORT:
+      ACCES_TOKEN_SECRET:
+    ports:
+      - 80:80
+    volumes:
+      - ./images/api/src:/usr/app/src
