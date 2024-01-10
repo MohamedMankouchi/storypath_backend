@@ -139,7 +139,7 @@ app.post("/register", async (req, res) => {
 
     if (existingUser) {
       return res.status(400).send({
-        error: "User with this email already exists!",
+        error: "Gebruiker met dit e-mailadres bestaat al",
         status: 400,
       });
     }
