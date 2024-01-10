@@ -155,7 +155,7 @@ app.post("/register", async (req, res) => {
     await db.insertOne(newUser);
     return res
       .status(200)
-      .json({ message: "Account successfully created", status: 200 });
+      .json({ message: "Account succesvol aangemaakt", status: 200 });
   } catch (err) {
     res.status(500).send({
       error: "An error has occured",
